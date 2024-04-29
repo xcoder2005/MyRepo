@@ -37,6 +37,14 @@
       width: 100px;
       height: 100px;
       background-color: #ddd;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2em;
+      cursor: pointer;
+    }
+    .occupied {
+      pointer-events: none;
     }
     #reset {
       cursor: pointer;
@@ -97,14 +105,14 @@
   }
 
   function clearall() {
-    for (var i = 0; i < 9; i++) {
-      var cell = $('.board .cell:nth-child(' + (i + 1) + ')');
-      if (cell.hasClass('occupied')) {
-        cell.text("");
-        cell.removeClass('occupied');
-      }
-    }
+    $('.cell').text('');
+    $('.cell').removeClass('occupied');
   }
+
+  $('.cell').click(function() {
+    var index = $(this).index();
+    insert(index, 'X'); // Assuming X represents player's move
+  });
 
   var AIAction = function (pos) {
     this.markat = pos;
