@@ -81,6 +81,7 @@
 
   /* Congratulations Screen */
   #congrats-screen {
+    display: none;
     position: fixed;
     top: 0;
     left: 0;
@@ -88,7 +89,6 @@
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
     z-index: 999;
-    display: flex;
     justify-content: center;
     align-items: center;
   }
@@ -147,7 +147,7 @@
 <div class="message" id="message"></div>
 <button class="reset-btn" onclick="resetGame()">Reset Game</button>
 
-<div id="congrats-screen" class="congrats-screen hidden">
+<div id="congrats-screen">
   <div class="congrats-message">
     <h2>Congratulations!</h2>
     <p>Player <span id="winner"></span> wins!</p>
@@ -181,7 +181,8 @@
       const index = cell.dataset.index;
       if (cell.textContent === '') {
         cell.textContent = currentPlayer;
-        if (currentPlayer === 'X') {
+        if (checkWinner()) {
+          if (currentPlayer === 'X') {
             showCongratulations(currentPlayer);
           } else {
             showMessage("Try Again!");
@@ -280,14 +281,14 @@
       cell.textContent = '';
     });
     document.getElementById('message').textContent = '';
-    document.getElementById('congrats-screen').classList.add('hidden');
+    document.getElementById('congrats-screen').style.display = 'none';
     currentPlayer = 'X';
     gameOver = false;
   }
 
   function showCongratulations(winner) {
     document.getElementById('winner').textContent = winner;
-    document.getElementById('congrats-screen').classList.remove('hidden');
+    document.getElementById('congrats-screen').style.display = 'flex';
   }
 
   function showMessage(message) {
