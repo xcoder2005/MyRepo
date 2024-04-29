@@ -15,6 +15,7 @@
     justify-content: center;
     align-items: center;
     height: 100vh;
+    position: relative;
   }
 
   .board {
@@ -79,8 +80,8 @@
     background-color: #0056b3;
   }
 
-  /* Congratulations Screen */
-  #congrats-screen {
+  /* Congratulations and Try Again Screen */
+  .transparent-screen {
     display: none;
     position: fixed;
     top: 0;
@@ -93,11 +94,27 @@
     align-items: center;
   }
 
-  .congrats-message {
+  .congrats-message, .try-again-message {
     text-align: center;
     color: white;
+    position: relative;
   }
 
+  .loading {
+    display: none;
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #fff;
+    font-size: 14px;
+  }
+
+  #congrats-screen .reset-btn, #try-again-screen .reset-btn {
+    margin-top: 20px;
+  }
+
+  /* Balloons Animation */
   .balloons {
     position: relative;
   }
@@ -142,12 +159,10 @@
     <div class="cell" data-index="7"></div>
     <div class="cell" data-index="8"></div>
   </div>
+  <div class="loading" id="loading">Computer is thinking...</div>
 </div>
 
-<div class="message" id="message"></div>
-<button class="reset-btn" onclick="resetGame()">Reset Game</button>
-
-<div id="congrats-screen">
+<div class="transparent-screen" id="congrats-screen">
   <div class="congrats-message">
     <h2>Congratulations!</h2>
     <p>Player <span id="winner"></span> wins!</p>
@@ -157,6 +172,14 @@
       <img src="https://via.placeholder.com/50x100" class="balloon balloon3">
       <!-- Add more balloon images as needed -->
     </div>
+    <button class="reset-btn" onclick="resetGame()">Reset Game</button>
+  </div>
+</div>
+
+<div class="transparent-screen" id="try-again-screen">
+  <div class="try-again-message">
+    <h2>Try Again!</h2>
+    <button class="reset-btn" onclick="resetGame()">Reset Game</button>
   </div>
 </div>
 
@@ -185,7 +208,7 @@
           if (currentPlayer === 'X') {
             showCongratulations(currentPlayer);
           } else {
-            showMessage("Try Again!");
+            showTryAgain();
           }
           gameOver = true;
         } else if ([...cells].every(cell => cell.textContent !== '')) {
@@ -194,7 +217,8 @@
         } else {
           currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
           if (currentPlayer === 'O') {
-            setTimeout(makeComputerMove, 500); // Delay for better visualization
+            document.getElementById('loading').style.display = 'block';
+            setTimeout(makeComputerMove, 1000); // Delay for better visualization
           }
         }
       }
@@ -204,11 +228,12 @@
   function makeComputerMove() {
     const bestMove = getBestMove();
     cells[bestMove].textContent = currentPlayer;
+    document.getElementById('loading').style.display = 'none';
     if (checkWinner()) {
       if (currentPlayer === 'X') {
         showCongratulations(currentPlayer);
       } else {
-        showMessage("Try Again!");
+        showTryAgain();
       }
       gameOver = true;
     } else if ([...cells].every(cell => cell.textContent !== '')) {
@@ -282,6 +307,7 @@
     });
     document.getElementById('message').textContent = '';
     document.getElementById('congrats-screen').style.display = 'none';
+    document.getElementById('try-again-screen').style.display = 'none';
     currentPlayer = 'X';
     gameOver = false;
   }
@@ -289,6 +315,10 @@
   function showCongratulations(winner) {
     document.getElementById('winner').textContent = winner;
     document.getElementById('congrats-screen').style.display = 'flex';
+  }
+
+  function showTryAgain() {
+    document.getElementById('try-again-screen').style.display = 'flex';
   }
 
   function showMessage(message) {
