@@ -1,329 +1,156 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tic Tac Toe</title>
-<style>
-  body {
-    background-color: #f0f0f0;
-    font-family: Arial, sans-serif;
-  }
-
-  .container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    position: relative;
-  }
-
-  .board {
-    display: grid;
-    grid-template-columns: repeat(3, 100px);
-    grid-template-rows: repeat(3, 100px);
-    gap: 2px;
-    background-color: #444;
-    border: 4px solid #333;
-    border-radius: 10px;
-  }
-
-  .cell {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 3em;
-    color: #fff;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-
-  .cell:hover {
-    background-color: #555;
-  }
-
-  .cell:nth-child(3n+1) {
-    border-left: none;
-  }
-
-  .cell:nth-child(n+7) {
-    border-bottom: none;
-  }
-
-  .cell:nth-child(3n+3) {
-    border-right: none;
-  }
-
-  .cell:nth-child(-n+3) {
-    border-top: none;
-  }
-
-  .message {
-    text-align: center;
-    font-size: 1.5em;
-    margin-top: 5px;
-  }
-
-  .reset-btn {
-    margin-top: 10px;
-    padding: 10px 20px;
-    font-size: 1em;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-
-  .reset-btn:hover {
-    background-color: #0056b3;
-  }
-
-  /* Congratulations and Try Again Screen */
-  .transparent-screen {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
-    z-index: 999;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .congrats-message, .try-again-message {
-    text-align: center;
-    color: white;
-    position: relative;
-  }
-
-  .loading {
-    display: none;
-    position: absolute;
-    top: -30px;
-    left: 50%;
-    transform: translateX(-50%);
-    color: #fff;
-    font-size: 14px;
-  }
-
-  #congrats-screen .reset-btn, #try-again-screen .reset-btn {
-    margin-top: 20px;
-  }
-
-  /* Balloons Animation */
-  .balloons {
-    position: relative;
-  }
-
-  .balloon {
-    position: absolute;
-    animation: balloon-rise 10s linear infinite;
-  }
-
-  @keyframes balloon-rise {
-    0% {
-      transform: translateY(0);
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tic-Tac-Toe</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <style>
+    * {
+      -webkit-transition: 300ms;
+      font-family: 'Cabin';
     }
-    100% {
-      transform: translateY(-100%);
+    body {
+      background-image: url('http://www.publicdomainpictures.net/pictures/120000/velka/mint-green-diffused-background.jpg');
+      background-repeat: no-repeat;
+      background-attachment: fixed;
     }
-  }
-
-  .balloon1 {
-    left: 10%;
-  }
-
-  .balloon2 {
-    left: 50%;
-  }
-
-  .balloon3 {
-    left: 90%;
-  }
-</style>
+    .text-right {
+      text-align: right;
+    }
+    .container-fluid {
+      margin-top: 20px;
+    }
+    .jumbotron {
+      background: rgba(0, 0, 0, 0.0);
+      padding: 20px;
+    }
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      grid-gap: 10px;
+      height: 450px;
+      width: 450px;
+      margin: 0 auto;
+    }
+    .cell {
+      width: 100px;
+      height: 100px;
+      background-color: #ddd;
+    }
+    #reset {
+      cursor: pointer;
+    }
+    .panel {
+      margin-bottom: 0px;
+      margin-top: 150px;
+      padding-top: 10px;
+      background: rgba(255, 255, 255, 0.8);
+      font-size: 20px;
+    }
+    #title {
+      color: black;
+      letter-spacing: 3px;
+      margin-right: 20px;
+      font-weight: 600;
+      display: inline-block;
+    }
+    #title:hover {
+      text-decoration: none;
+      color: #2c2d2d;
+      cursor: default;
+      transition-delay: 50ms;
+      transition-duration: 100ms;
+    }
+    #myself:hover {
+      text-decoration: none;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 2px;
+      transition-delay: 50ms;
+      transition-duration: 300ms;
+      padding: 6px;
+      display: inline;
+    }
+  </style>
 </head>
 <body>
-<div class="container">
-  <div class="board" onclick="handleMove(event)">
-    <div class="cell" data-index="0"></div>
-    <div class="cell" data-index="1"></div>
-    <div class="cell" data-index="2"></div>
-    <div class="cell" data-index="3"></div>
-    <div class="cell" data-index="4"></div>
-    <div class="cell" data-index="5"></div>
-    <div class="cell" data-index="6"></div>
-    <div class="cell" data-index="7"></div>
-    <div class="cell" data-index="8"></div>
+  <div class="text-right">
+    <h1 id="title">Tic-Tac-Toe</h1>
   </div>
-  <div class="loading" id="loading">Computer is thinking...</div>
-</div>
-
-<div class="transparent-screen" id="congrats-screen">
-  <div class="congrats-message">
-    <h2>Congratulations!</h2>
-    <p>Player <span id="winner"></span> wins!</p>
-    <div class="balloons">
-      <img src="https://via.placeholder.com/50x100" class="balloon balloon1">
-      <img src="https://via.placeholder.com/50x100" class="balloon balloon2">
-      <img src="https://via.placeholder.com/50x100" class="balloon balloon3">
-      <!-- Add more balloon images as needed -->
+  <div class="container-fluid">
+    <div class="jumbotron">
+      <div class="board">
+        <div class="cell" id="0"></div>
+        <div class="cell" id="1"></div>
+        <div class="cell" id="2"></div>
+        <div class="cell" id="3"></div>
+        <div class="cell" id="4"></div>
+        <div class="cell" id="5"></div>
+        <div class="cell" id="6"></div>
+        <div class="cell" id="7"></div>
+        <div class="cell" id="8"></div>
+      </div>
     </div>
-    <button class="reset-btn" onclick="resetGame()">Reset Game</button>
+    <div class="text-center">
+      <div id="reset">
+        <i class="fa fa-refresh fa-5x"></i>
+      </div>
+    </div>
   </div>
-</div>
-
-<div class="transparent-screen" id="try-again-screen">
-  <div class="try-again-message">
-    <h2>Try Again!</h2>
-    <button class="reset-btn" onclick="resetGame()">Reset Game</button>
+  <div id="deb"></div>
+  <div class="text-center panel">
+    <p>'AI Based Tic-tac-toe' : A project by <a href="https://purushottampoudel.com.np" id="myself">Purushottam Poudel</a><br>Inspired from <a href="https://purushottampoudel.com.np" id="myself">Purushottam Poudel</a></p>
   </div>
-</div>
-
+</body>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-  let currentPlayer = 'X';
-  const cells = document.querySelectorAll('.cell');
-  const winningCombos = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6]
-  ];
-  let gameOver = false;
+  var globals = {};
+  var level = "";
 
-  function handleMove(event) {
-    if (event.target.classList.contains('cell') && !gameOver) {
-      const cell = event.target;
-      const index = cell.dataset.index;
-      if (cell.textContent === '') {
-        cell.textContent = currentPlayer;
-        if (checkWinner()) {
-          if (currentPlayer === 'X') {
-            showCongratulations(currentPlayer);
-          } else {
-            showTryAgain();
-          }
-          gameOver = true;
-        } else if ([...cells].every(cell => cell.textContent !== '')) {
-          showMessage("It's a draw!");
-          gameOver = true;
-        } else {
-          currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-          if (currentPlayer === 'O') {
-            document.getElementById('loading').style.display = 'block';
-            setTimeout(makeComputerMove, 1000); // Delay for better visualization
-          }
-        }
+  function insert(n, char) {
+    var cell = $('.board .cell:nth-child(' + (n + 1) + ')');
+    if (!cell.hasClass('occupied')) {
+      cell.text(char);
+      cell.css({ color: char == "X" ? "green" : "red" });
+      cell.addClass('occupied');
+    }
+  }
+
+  function clearall() {
+    for (var i = 0; i < 9; i++) {
+      var cell = $('.board .cell:nth-child(' + (i + 1) + ')');
+      if (cell.hasClass('occupied')) {
+        cell.text("");
+        cell.removeClass('occupied');
       }
     }
   }
 
-  function makeComputerMove() {
-    const bestMove = getBestMove();
-    cells[bestMove].textContent = currentPlayer;
-    document.getElementById('loading').style.display = 'none';
-    if (checkWinner()) {
-      if (currentPlayer === 'X') {
-        showCongratulations(currentPlayer);
-      } else {
-        showTryAgain();
-      }
-      gameOver = true;
-    } else if ([...cells].every(cell => cell.textContent !== '')) {
-      showMessage("It's a draw!");
-      gameOver = true;
-    } else {
-      currentPlayer = 'X';
+  var AIAction = function (pos) {
+    this.markat = pos;
+    this.minimaxVal = 0;
+    this.applyTo = function (state) {
+      var next = new State(state);
+      next.board[this.markat] = state.turn;
+      if (state.turn === "O")
+        next.numomoves++;
+      next.advanceTurn();
+      return next;
     }
-  }
+  };
 
-  function getBestMove() {
-    let bestScore = -Infinity;
-    let move;
-    for (let i = 0; i < cells.length; i++) {
-      if (cells[i].textContent === '') {
-        cells[i].textContent = 'O';
-        const score = minimax(cells, 0, false);
-        cells[i].textContent = '';
-        if (score > bestScore) {
-          bestScore = score;
-          move = i;
-        }
-      }
-    }
-    return move;
-  }
-
-  function minimax(board, depth, isMaximizing) {
-    if (checkWinner()) {
-      return isMaximizing ? -10 + depth : 10 - depth;
-    } else if ([...board].every(cell => cell.textContent !== '')) {
+  AIAction.ASCENDING = function (action1, action2) {
+    if (action1.minimaxVal < action2.minimaxVal)
+      return -1;
+    else if (action1.minimaxVal > action2.minimaxVal)
+      return 1;
+    else
       return 0;
-    }
-
-    if (isMaximizing) {
-      let bestScore = -Infinity;
-      for (let i = 0; i < board.length; i++) {
-        if (board[i].textContent === '') {
-          board[i].textContent = 'O';
-          const score = minimax(board, depth + 1, false);
-          board[i].textContent = '';
-          bestScore = Math.max(score, bestScore);
-        }
-      }
-      return bestScore;
-    } else {
-      let bestScore = Infinity;
-      for (let i = 0; i < board.length; i++) {
-        if (board[i].textContent === '') {
-          board[i].textContent = 'X';
-          const score = minimax(board, depth + 1, true);
-          board[i].textContent = '';
-          bestScore = Math.min(score, bestScore);
-        }
-      }
-      return bestScore;
-    }
   }
 
-  function checkWinner() {
-    return winningCombos.some(combo => {
-      return combo.every(index => {
-        return cells[index].textContent === currentPlayer;
-      });
-    });
-  }
-
-  function resetGame() {
-    cells.forEach(cell => {
-      cell.textContent = '';
-    });
-    document.getElementById('message').textContent = '';
-    document.getElementById('congrats-screen').style.display = 'none';
-    document.getElementById('try-again-screen').style.display = 'none';
-    currentPlayer = 'X';
-    gameOver = false;
-  }
-
-  function showCongratulations(winner) {
-    document.getElementById('winner').textContent = winner;
-    document.getElementById('congrats-screen').style.display = 'flex';
-  }
-
-  function showTryAgain() {
-    document.getElementById('try-again-screen').style.display = 'flex';
-  }
-
-  function showMessage(message) {
-    document.getElementById('message').textContent = message;
+  AIAction.DESCENDING = function (action1, action2) {
+    if (action1.minimaxVal > action2.minimaxVal)
+      return -1;
   }
 </script>
-</body>
 </html>
