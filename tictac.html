@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tic Tac Toe</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+    }
+    .board {
+        display: grid;
+        grid-template-columns: repeat(3, 100px);
+        grid-gap: 5px;
+        margin: 20px auto;
+    }
+    .cell {
+        width: 100px;
+        height: 100px;
+        background-color: lightgray;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 40px;
+        cursor: pointer;
+    }
+    .cell:hover {
+        background-color: darkgray;
+    }
+</style>
+</head>
+<body>
+
+<div class="board"></div>
+
+<script>
+    const board = document.querySelector('.board');
+    let cells = [];
+    let currentPlayer = 'X';
+    let gameOver = false;
+
+    // Create the board
+    for (let i = 0; i < 9; i++) {
+        const cell = document.createElement('div');
+        cell.classList.add('cell');
+        cell.dataset.index = i;
+        cell.addEventListener('click', () => cellClicked(i));
+        board.appendChild(cell);
+        cells.push(cell);
+    }
+
+    // Handle cell click
+    function cellClicked(index) {
+        if (gameOver || cells[index].textContent !== '') return;
+        cells[index].textContent = currentPlayer;
+        if (checkWinner(currentPlayer)) {
+            alert(`${currentPlayer} wins!`);
+            gameOver = true;
+            return;
+        }
+        if (checkDraw()) {
+            alert("It's a draw!");
+            gameOver = true;
+            return;
+        }
+        currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+        computerMove();
+    }
+
+    // Check for a winner
+    function checkWinner(player) {
+        const winningCombos = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+            [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+            [0, 4, 8], [2, 4, 6] // Diagonals
+        ];
+        return winningCombos.some(combo =>
+            combo.every(index => cells[index].textContent === player)
+        );
+    }
+
+    // Check for a draw
+    function checkDraw() {
+        return cells.every(cell => cell.textContent !== '');
+    }
+
+    // Computer move
+    function computerMove() {
+        if (gameOver) return;
+        let emptyCells = cells.filter(cell => cell.textContent === '');
+        if (emptyCells.length === 0) return;
+        let randomIndex = Math.floor(Math.random() * emptyCells.length);
+        let cellIndex = parseInt(emptyCells[randomIndex].dataset.index);
+        cells[cellIndex].textContent = currentPlayer;
+        if (checkWinner(currentPlayer)) {
+            alert(`${currentPlayer} wins!`);
+            gameOver = true;
+            return;
+        }
+        if (checkDraw()) {
+            alert("It's a draw!");
+            gameOver = true;
+            return;
+        }
+        currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+    }
+</script>
+
+</body>
+</html>
