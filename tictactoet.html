@@ -10,29 +10,39 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #74b9ff, #a29bfe);
             margin: 0;
         }
         .container {
             text-align: center;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 320px;
         }
         .board {
             display: grid;
             grid-template-columns: repeat(3, 100px);
-            grid-gap: 5px;
+            grid-gap: 10px;
             margin: 20px auto;
         }
         .cell {
             width: 100px;
             height: 100px;
-            background-color: #fff;
-            border: 2px solid #000;
+            background-color: #ecf0f1;
+            border-radius: 10px;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 2em;
+            font-size: 2.5em;
+            color: #2d3436;
             cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .cell:hover {
+            background-color: #dfe6e9;
         }
         .cell.disabled {
             pointer-events: none;
@@ -40,23 +50,13 @@
         .status {
             font-size: 1.2em;
             margin: 10px;
-        }
-        .difficulty {
-            margin: 10px;
+            color: #2d3436;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="status">Your turn</div>
-        <div class="difficulty">
-            <label for="difficulty">Choose difficulty: </label>
-            <select id="difficulty">
-                <option value="easy">Easy</option>
-                <option value="medium">Medium</option>
-                <option value="hard">Hard</option>
-            </select>
-        </div>
         <div class="board">
             <div class="cell" data-index="0"></div>
             <div class="cell" data-index="1"></div>
@@ -72,7 +72,6 @@
     <script>
         const cells = document.querySelectorAll('.cell');
         const statusText = document.querySelector('.status');
-        const difficultySelect = document.getElementById('difficulty');
         let board = ['', '', '', '', '', '', '', '', ''];
         let currentPlayer = 'X';
         let isGameActive = true;
@@ -173,18 +172,7 @@
         };
 
         const computerMove = () => {
-            let move;
-            const emptyCells = board.reduce((acc, cell, idx) => cell === '' ? acc.concat(idx) : acc, []);
-            const difficulty = difficultySelect.value;
-
-            if (difficulty === 'easy') {
-                move = emptyCells[Math.floor(Math.random() * emptyCells.length)];
-            } else if (difficulty === 'medium') {
-                move = Math.random() < 0.5 ? emptyCells[Math.floor(Math.random() * emptyCells.length)] : bestMove(board, 'O');
-            } else {
-                move = bestMove(board, 'O');
-            }
-
+            let move = bestMove(board, 'O');
             updateBoard(move, 'O');
             if (checkWin('O')) {
                 statusText.innerText = "Computer wins!";
@@ -221,8 +209,6 @@
                 }
             });
         });
-
-        difficultySelect.addEventListener('change', resetGame);
     </script>
 </body>
 </html>
