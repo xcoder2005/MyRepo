@@ -3,137 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Snake Game with Sensors</title>
+    <title>Thoughts Board</title>
     <style>
         body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            width: 60%;
+            max-width: 800px;
+        }
+
+        header {
+            background-color: #6200ea;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+        }
+
+        header h1 {
             margin: 0;
-            background-color: #000;
+            font-size: 2rem;
         }
 
-        #game-container {
-            position: relative;
-            width: 400px;
-            height: 400px;
-            border: 1px solid #fff;
+        header p {
+            margin: 0;
+            font-size: 1rem;
         }
 
-        canvas {
+        .input-section {
+            padding: 20px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        textarea {
             width: 100%;
-            height: 100%;
-            display: block;
+            height: 80px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+            resize: none;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        textarea:focus {
+            border-color: #6200ea;
+            box-shadow: 0 0 10px rgba(98, 0, 234, 0.2);
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #6200ea;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #3700b3;
+        }
+
+        #thoughtsContainer {
+            padding: 20px;
+            border-top: 1px solid #eee;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .thought {
+            background-color: #f4f4f9;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
         }
     </style>
 </head>
 <body>
-    <div id="game-container">
-        <canvas id="game-canvas"></canvas>
+    <div class="container">
+        <header>
+            <h1>Thoughts Board</h1>
+            <p>Share what's on your mind</p>
+        </header>
+        
+        <div class="input-section">
+            <textarea id="thoughtInput" placeholder="Type your thoughts here..."></textarea>
+            <button onclick="postThought()">Post</button>
+        </div>
+        
+        <div id="thoughtsContainer">
+            <!-- Thoughts will be displayed here -->
+        </div>
     </div>
+
     <script>
-        const canvas = document.getElementById('game-canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = 400;
-        canvas.height = 400;
+        function postThought() {
+            const input = document.getElementById('thoughtInput');
+            const thoughtsContainer = document.getElementById('thoughtsContainer');
 
-        const scale = 20;
-        let snake = [{ x: 5, y: 5 }];
-        let dx = scale;
-        let dy = 0;
-        let food = { x: 10, y: 10 };
-
-        function drawSnake() {
-            ctx.fillStyle = 'lime';
-            snake.forEach(part => {
-                ctx.fillRect(part.x * scale, part.y * scale, scale, scale);
-            });
-        }
-
-        function moveSnake() {
-            const head = { x: snake[0].x + dx / scale, y: snake[0].y + dy / scale };
-            snake.unshift(head);
-
-            if (snake[0].x === food.x && snake[0].y === food.y) {
-                createFood();
-            } else {
-                snake.pop();
-            }
-        }
-
-        function createFood() {
-            food = {
-                x: Math.floor(Math.random() * canvas.width / scale),
-                y: Math.floor(Math.random() * canvas.height / scale)
-            };
-        }
-
-        function drawFood() {
-            ctx.fillStyle = 'red';
-            ctx.fillRect(food.x * scale, food.y * scale, scale, scale);
-        }
-
-        function clearCanvas() {
-            ctx.fillStyle = 'black';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-        }
-
-        function gameLoop() {
-            clearCanvas();
-            drawFood();
-            moveSnake();
-            drawSnake();
-            checkCollision();
-        }
-
-        function checkCollision() {
-            // Check wall collisions
-            if (snake[0].x < 0 || snake[0].x >= canvas.width / scale ||
-                snake[0].y < 0 || snake[0].y >= canvas.height / scale) {
-                resetGame();
+            if (input.value.trim() === '') {
+                alert('Please enter a thought before posting.');
+                return;
             }
 
-            // Check self collisions
-            for (let i = 4; i < snake.length; i++) {
-                if (snake[i].x === snake[0].x && snake[i].y === snake[0].y) {
-                    resetGame();
-                }
-            }
+            const thoughtDiv = document.createElement('div');
+            thoughtDiv.className = 'thought';
+            thoughtDiv.textContent = input.value;
+
+            thoughtsContainer.insertBefore(thoughtDiv, thoughtsContainer.firstChild);
+
+            input.value = ''; // Clear the input field
         }
-
-        function resetGame() {
-            snake = [{ x: 5, y: 5 }];
-            dx = scale;
-            dy = 0;
-            createFood();
-        }
-
-        function handleOrientation(event) {
-            const gamma = event.gamma;
-
-            if (gamma > 15) {
-                dx = scale;
-                dy = 0;
-            } else if (gamma < -15) {
-                dx = -scale;
-                dy = 0;
-            }
-
-            const beta = event.beta;
-
-            if (beta > 15) {
-                dx = 0;
-                dy = scale;
-            } else if (beta < -15) {
-                dx = 0;
-                dy = -scale;
-            }
-        }
-
-        window.addEventListener('deviceorientation', handleOrientation);
-
-        setInterval(gameLoop, 100);
     </script>
 </body>
 </html>
